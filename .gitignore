@@ -2,3 +2,9 @@ font2openvg
 *~
 *.o
 *.so
+client/clip
+client/hellovg
+client/mouse-hellovg
+client/particles
+client/screensize
+client/shapedemo
