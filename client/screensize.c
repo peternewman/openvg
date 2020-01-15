@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "VG/openvg.h"
-#include "VG/vgu.h"
 #include "fontinfo.h"
 #include "shapes.h"
 

@@ -1,8 +1,9 @@
 INCLUDEFLAGS=-I/opt/vc/include -I/opt/vc/include/interface/vmcs_host/linux -I/opt/vc/include/interface/vcos/pthreads -fPIC
-LIBFLAGS=-L/opt/vc/lib -lbrcmEGL -lbrcmGLESv2 -ljpeg
+#LIBFLAGS=-L/opt/vc/lib -lbrcmEGL -lbrcmGLESv2 -ljpeg
+LIBFLAGS=-lEGL -lSimGearCore -lSimGearScene -lX11 -lGL -lGLU -ljpeg
 FONTLIB=/usr/share/fonts/truetype/ttf-dejavu
 FONTFILES=DejaVuSans.inc  DejaVuSansMono.inc DejaVuSerif.inc
-all:	font2openvg fonts library	
+all:	font2openvg fonts library
 
 libshapes.o:	libshapes.c shapes.h fontinfo.h fonts
 	gcc -O2 -Wall $(INCLUDEFLAGS) -c libshapes.c

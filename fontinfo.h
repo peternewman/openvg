@@ -1,6 +1,8 @@
 #ifndef OPENVG_FONTINFO_H
 #define OPENVG_FONTINFO_H
 
+#include <simgear/canvas/ShivaVG/openvg.h>
+
 #if defined(__cplusplus)
 extern "C" {
 #endif

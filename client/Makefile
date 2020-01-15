@@ -1,5 +1,6 @@
 INCLUDEFLAGS=-I/opt/vc/include -I/opt/vc/include/interface/vmcs_host/linux -I/opt/vc/include/interface/vcos/pthreads -I..
-LIBFLAGS=-L/opt/vc/lib -lEGL -lGLESv2 -lbcm_host -lpthread  -ljpeg
+#LIBFLAGS=-L/opt/vc/lib -lEGL -lGLESv2 -lbcm_host -lpthread  -ljpeg
+LIBFLAGS=-lEGL -lGLESv2 -lX11 -lSimGearCore -lSimGearScene -lGL -lGLU -lpthread  -ljpeg
 
 all: shapedemo hellovg mouse-hellovg particles screensize clip
 

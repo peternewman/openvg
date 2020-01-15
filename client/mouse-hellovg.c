@@ -1,4 +1,4 @@
-// first OpenVG program, with mouse 
+// first OpenVG program, with mouse
 // Anthony Starks (ajstarks@gmail.com)
 
 // revision history:  LW = Leycester Whewell (leycester@btconnect.com)
@@ -16,8 +16,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "VG/openvg.h"
-#include "VG/vgu.h"
 #include "fontinfo.h"
 #include "shapes.h"
 

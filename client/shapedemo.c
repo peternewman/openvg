@@ -7,8 +7,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
-#include "VG/openvg.h"
-#include "VG/vgu.h"
 #include "fontinfo.h"
 #include "shapes.h"
 
@@ -442,7 +440,7 @@ void refcard(int width, int height) {
 	coordpoint(ex, ey, dotsize, shapecolor);
 
 	sy -= (sh * spacing * 1.5);
-	Image(sx, sy, 100, 100, "starx.jpg");
+//	Image(sx, sy, 100, 100, "starx.jpg");
 
 	End();
 }

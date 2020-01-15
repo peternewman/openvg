@@ -1,6 +1,12 @@
-#include <VG/openvg.h>
-#include <VG/vgu.h>
+#include <simgear/canvas/ShivaVG/openvg.h>
+#include <simgear/canvas/ShivaVG/vgu.h>
 #include "fontinfo.h"
+#include <EGL/egl.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glx.h>
+#include <X11/Xlib.h>
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -29,6 +35,7 @@ extern "C" {
 	extern void SaveEnd(const char *);
 	extern void Background(unsigned int, unsigned int, unsigned int);
 	extern void BackgroundRGB(unsigned int, unsigned int, unsigned int, VGfloat);
+	//extern void init(int *, int *, EGLNativeWindowType);
 	extern void init(int *, int *);
 	extern void finish();
 	extern void setfill(VGfloat[4]);

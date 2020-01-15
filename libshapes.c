@@ -7,16 +7,20 @@
 //
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <termios.h>
 #include <assert.h>
 #include <jpeglib.h>
-#include "VG/openvg.h"
-#include "VG/vgu.h"
+#include <simgear/canvas/ShivaVG/openvg.h>
+#include <simgear/canvas/ShivaVG/vgu.h>
 #include "EGL/egl.h"
-#include "bcm_host.h"
+//#include "bcm_host.h"
 #include "DejaVuSans.inc"				   // font data
 #include "DejaVuSerif.inc"
 #include "DejaVuSansMono.inc"
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glx.h>
 #include "eglstate.h"					   // data structures for graphics state
 #include "fontinfo.h"					   // font data structure
 #include "shapes.h"
@@ -244,8 +248,10 @@ void initWindowSize(int x, int y, unsigned int w, unsigned int h) {
 }
 
 // init sets the system to its initial state
+//void init(int *w, int *h, EGLNativeWindowType eglWindow) {
 void init(int *w, int *h) {
-	bcm_host_init();
+	//bcm_host_init();
+
 	memset(state, 0, sizeof(*state));
 	state->window_x = init_x;
 	state->window_y = init_y;
@@ -288,11 +294,21 @@ void finish() {
 	unloadfont(SansTypeface.Glyphs, SansTypeface.Count);
 	unloadfont(SerifTypeface.Glyphs, SerifTypeface.Count);
 	unloadfont(MonoTypeface.Glyphs, MonoTypeface.Count);
-	eglSwapBuffers(state->display, state->surface);
-	eglMakeCurrent(state->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-	eglDestroySurface(state->display, state->surface);
-	eglDestroyContext(state->display, state->context);
-	eglTerminate(state->display);
+	//eglSwapBuffers(state->display, state->surface);
+	//eglMakeCurrent(state->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	//eglDestroySurface(state->display, state->surface);
+	//eglDestroyContext(state->display, state->context);
+	//eglTerminate(state->display);
+
+        //glXSwapBuffers(state->display, state->surface);
+        //getchar();
+        //glXSwapBuffers(state->display, state->surface);
+        //getchar();
+
+	//glXSwapBuffers(state->display, state->surface);
+	glXDestroyContext(state->display, state->context);
+	XDestroyWindow(state->display, state->surface);
+	XCloseDisplay(state->display);
 }
 
 //
@@ -341,7 +357,7 @@ void setfill(VGfloat color[4]) {
 	vgSetParameteri(fillPaint, VG_PAINT_TYPE, VG_PAINT_TYPE_COLOR);
 	vgSetParameterfv(fillPaint, VG_PAINT_COLOR, 4, color);
 	vgSetPaint(fillPaint, VG_FILL_PATH);
-	vgDestroyPaint(fillPaint);
+	//vgDestroyPaint(fillPaint);
 }
 
 // setstroke sets the stroke color
@@ -350,7 +366,7 @@ void setstroke(VGfloat color[4]) {
 	vgSetParameteri(strokePaint, VG_PAINT_TYPE, VG_PAINT_TYPE_COLOR);
 	vgSetParameterfv(strokePaint, VG_PAINT_COLOR, 4, color);
 	vgSetPaint(strokePaint, VG_STROKE_PATH);
-	vgDestroyPaint(strokePaint);
+	//vgDestroyPaint(strokePaint);
 }
 
 // StrokeWidth sets the stroke width
@@ -595,7 +611,8 @@ VGfloat TextDepth(Fontinfo f, int pointsize) {
 // Changed capabilities as others not needed at the moment - allows possible
 // driver optimisations.
 VGPath newpath() {
-	return vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F, 1.0f, 0.0f, 0, 0, VG_PATH_CAPABILITY_APPEND_TO);	// Other capabilities not needed
+	//return vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F, 1.0f, 0.0f, 0, 0, VG_PATH_CAPABILITY_APPEND_TO);	// Other capabilities not needed
+	return vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F, 1.0f, 0.0f, 0, 0, VG_PATH_CAPABILITY_ALL);	// Other capabilities not needed
 }
 
 // makecurve makes path data using specified segments and coordinates
@@ -652,7 +669,9 @@ void Polyline(VGfloat * x, VGfloat * y, VGint n) {
 void Rect(VGfloat x, VGfloat y, VGfloat w, VGfloat h) {
 	VGPath path = newpath();
 	vguRect(path, x, y, w, h);
-	vgDrawPath(path, VG_FILL_PATH | VG_STROKE_PATH);
+	//vguRect(path, 10, 10, 30, 30);
+	//vgDrawPath(path, VG_FILL_PATH | VG_STROKE_PATH);
+	vgDrawPath(path, VG_STROKE_PATH | VG_FILL_PATH);
 	vgDestroyPath(path);
 }
 
@@ -695,10 +714,10 @@ void Arc(VGfloat x, VGfloat y, VGfloat w, VGfloat h, VGfloat sa, VGfloat aext) {
 
 // Start begins the picture, clearing a rectangular region with a specified color
 void Start(int width, int height) {
-	VGfloat color[4] = { 1, 1, 1, 1 };
+	VGfloat color[4] = { 0, 1, 0, 0.5 };
 	vgSetfv(VG_CLEAR_COLOR, 4, color);
 	vgClear(0, 0, width, height);
-	color[0] = 0, color[1] = 0, color[2] = 0;
+	color[0] = 0, color[1] = 0, color[2] = 1;
 	setfill(color);
 	setstroke(color);
 	StrokeWidth(0);
@@ -710,9 +729,16 @@ void Start(int width, int height) {
 
 // End checks for errors, and renders to the display
 void End() {
+	vgFinish();
 	assert(vgGetError() == VG_NO_ERROR);
-	eglSwapBuffers(state->display, state->surface);
-	assert(eglGetError() == EGL_SUCCESS);
+        //VGErrorCode err = vgGetError();
+        //printf("Got error %04x\n", err);
+        //assert(err == VG_NO_ERROR);
+	//eglSwapBuffers(state->display, state->surface);
+        //EGLint err2 = eglGetError();
+        //printf("Got error %04x\n", err2);
+	//assert(err2 == EGL_SUCCESS);
+	glXSwapBuffers(state->display, state->surface);
 }
 
 // SaveEnd dumps the raster before rendering to the display 
@@ -728,8 +754,9 @@ void SaveEnd(const char *filename) {
 			fclose(fp);
 		}
 	}
-	eglSwapBuffers(state->display, state->surface);
-	assert(eglGetError() == EGL_SUCCESS);
+	//eglSwapBuffers(state->display, state->surface);
+	//assert(eglGetError() == EGL_SUCCESS);
+	glXSwapBuffers(state->display, state->surface);
 }
 
 // Backgroud clears the screen to a solid background color
@@ -738,6 +765,7 @@ void Background(unsigned int r, unsigned int g, unsigned int b) {
 	RGB(r, g, b, colour);
 	vgSetfv(VG_CLEAR_COLOR, 4, colour);
 	vgClear(0, 0, state->window_width, state->window_height);
+	//printf("Background %d %d\n", state->window_width, state->window_height);
 }
 
 // BackgroundRGB clears the screen to a background color with alpha
@@ -761,12 +789,12 @@ void AreaClear(unsigned int x, unsigned int y, unsigned int w, unsigned int h) {
 
 // WindowOpacity sets the  window opacity
 void WindowOpacity(unsigned int a) {
-	dispmanChangeWindowOpacity(state, a);
+	//dispmanChangeWindowOpacity(state, a);
 }
 
 // WindowPosition moves the window to given position
 void WindowPosition(int x, int y) {
-	dispmanMoveWindow(state, x, y);
+	//dispmanMoveWindow(state, x, y);
 }
 
 // Outlined shapes

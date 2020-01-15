@@ -16,8 +16,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <time.h>
-#include "VG/openvg.h"
-#include "VG/vgu.h"
 #include "shapes.h"
 
 // ~55 seems to be the limit before jankiness kicks in
